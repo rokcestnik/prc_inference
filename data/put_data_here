@@ -1,0 +1,21 @@
+Put the signal in one file called 'signal.txt' and the driving in another called 'driving.txt'. 
+Both files should be in format: "t x(t)\n" and the times in both files should match. 
+
+Example:
+'signal.txt'
+0.010000 2.040512
+0.020000 2.034066
+0.030000 2.020611
+0.040000 2.002333
+0.050000 1.981134
+0.060000 1.957674
+...
+
+'driving.txt'
+0.010000 0.655922
+0.020000 -0.078494
+0.030000 -0.775742
+0.040000 -0.474988
+0.050000 -0.923393
+0.060000 -0.065205
+...
