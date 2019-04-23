@@ -55,14 +55,14 @@ int main(void){
 		st_resp++;
 	}
 	fclose(f);
-	//lets determine dt.... just for when it is constant!!!!
+	//lets determine dt... (the time increment has to be constant)
 	double dt = resp_signal[2][0]-resp_signal[1][0];
 	//make intervals
 	double ***intervals = new double**[st_heart-1];
 	st_resp = 0;
 	f = fopen("data/driving.txt","rt");
 	t = 0;
-	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first heart beat
+	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first event
 	double **stimuli_buffer = new double*[1000000];
 	for(int i = 0; i < 1000000; ++i) stimuli_buffer[i] = new double[2]; //define stimuli buffer
 	for(int in = 0; in < st_heart-1-1; ++in){ //loop over intervals
@@ -86,7 +86,7 @@ int main(void){
 	double psi_std = 0;
 	int psi_counter = 0;
 	for(int in = 0; in < st_heart-1-1; ++in){ //loop over intervals
-		int hms = intervals[in][0][0]; // how many signals
+		int hms = intervals[in][0][0]; //how many signals
 		double *phasenew = new double[hms+1]; //phase over all times that we have signal
 		phasenew[1] = intervals[in][1][0]*prc[0];
 		for(int i = 2; i < hms+1; ++i){

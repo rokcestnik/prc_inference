@@ -58,7 +58,7 @@ int main(void){
 	st_resp = 0;
 	f = fopen("data/driving.txt","rt");
 	t = 0;
-	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first heart beat
+	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first event
 	double **stimuli_buffer = new double*[1000000];
 	for(int i = 0; i < 1000000; ++i) stimuli_buffer[i] = new double[2]; //define stimuli buffer
 	for(int in = 0; in < st_heart-1-1; ++in){ //loop over intervals
@@ -85,8 +85,7 @@ int main(void){
 		A(in,0) = intervals[in][0][1];
 		A(in,1) = 0;
 		for(int i = 1; i < intervals[in][0][0]+1; ++i){
-			//A(in,1) += intervals[in][i][1]; //stimuli weights (integrating respiration signal)
-			if(i != 1) A(in,1) += intervals[in][i][1]*(intervals[in][i][0]-intervals[in][i-1][0]); //stimuli weights (integrating respiration signal)
+			if(i != 1) A(in,1) += intervals[in][i][1]*(intervals[in][i][0]-intervals[in][i-1][0]); //stimuli weights (integrating the driving signal)
 			else A(in,1) += intervals[in][i][1]*intervals[in][i][0];
 		}
 		for(int f = 0; f < Nfourier; ++f){

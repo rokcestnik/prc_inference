@@ -62,14 +62,14 @@ int main(void){
 		st_resp++;
 	}
 	fclose(f);
-	//lets determine dt.... just for when it is constant!!!!
+	//lets determine dt... (the time increment has to be constant)
 	double dt = resp_signal[2][0]-resp_signal[1][0];
 	//make intervals
 	double ***intervals = new double**[st_heart-1];
 	st_resp = 0;
 	f = fopen("data/driving.txt","rt");
 	t = 0;
-	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first heart beat
+	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first event
 	double **stimuli_buffer = new double*[1000000];
 	for(int i = 0; i < 1000000; ++i) stimuli_buffer[i] = new double[2]; //define stimuli buffer
 	for(int in = 0; in < st_heart-1-1; ++in){ //loop over intervals
@@ -92,7 +92,7 @@ int main(void){
 	//create the matrix
 	MatrixXf A(st_heart-1, 1+1+2*Nfourier); //lets make the matrix
 	for(int in = 0; in < st_heart-1-1; ++in){ //loop over intervals
-		int hms = intervals[in][0][0]; // how many signals
+		int hms = intervals[in][0][0]; //how many signals
 		double *phase = new double[hms+1]; //phase over all times that we have signal
 		double *phasenew = new double[hms+1]; //phase over all times that we have signal
 		phasenew[1] = intervals[in][1][0]*prc[0];
@@ -106,16 +106,14 @@ int main(void){
 		}
 		//print phase
 		f = fopen("prc_algorithm/phase.txt","at");
-		//tle je blo prej tko... for(int i = 0; i < hms; ++i) fprintf(f,"%lf %lf\n", heart_spikes[in]+i*dt, phase[i+1]/(2*Pi)); //hmd+1,intervals[in][0][1]/double(hms) namest dt !!da se ujemajo cas fazne tecke z tockami srca!! pac ni tocno, ampak odstopa najvec dt
-		for(int i = 0; i < hms; ++i) fprintf(f,"%lf %lf\n", heart_spikes[in]+intervals[in][i+1][0], phase[i+1]/(2*Pi)); //zdej je pa tocno
+		for(int i = 0; i < hms; ++i) fprintf(f,"%lf %lf\n", heart_spikes[in]+intervals[in][i+1][0], phase[i+1]/(2*Pi)); 
 		fclose(f);
 		//fill matrix
 		double T = intervals[in][0][1];
 		A(in,0) = T;
 		A(in,1) = 0;
 		for(int i = 1; i < hms+1; ++i){
-			//A(in,1) += intervals[in][i][1]*dt;
-			if(i != 1) A(in,1) += intervals[in][i][1]*(intervals[in][i][0]-intervals[in][i-1][0]); //stimuli weights (integrating respiration signal)
+			if(i != 1) A(in,1) += intervals[in][i][1]*(intervals[in][i][0]-intervals[in][i-1][0]); //stimuli weights (integrating the driving signal)
 			else A(in,1) += intervals[in][i][1]*intervals[in][i][0];
 		}
 		for(int f = 0; f < Nfourier; ++f){ 
@@ -131,7 +129,6 @@ int main(void){
 					sumc += cos((f+1)*phase[i])*intervals[in][i][1]*intervals[in][i][0];
 				}
 				double phas = intervals[in][i][0]/intervals[in][0][1]*2*Pi; //t/T*2*Pi
-				//printf("difference = %lf\n", phas-phase[i]);
 			}
 			A(in,2+2*f) = sums;
 			A(in,2+2*f+1) = sumc;
