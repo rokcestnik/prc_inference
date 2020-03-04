@@ -24,14 +24,14 @@ int main(void){
 	fclose(f);
 	//count the pulses
 	int st_heart = 0;
-	f = fopen("signal_thresholding/events.txt","rt");
+	f = fopen("data/processed_data/events.txt","rt");
 	double t, s;
 	while(fscanf(f, "%lf\n", &t) != EOF){
 		st_heart++;
 	}
 	fclose(f);
 	int st_resp = 0;
-	f = fopen("data/driving.txt","rt");
+	f = fopen("data/processed_data/driving.txt","rt");
 	while(fscanf(f, "%lf %lf\n", &t, &s) != EOF){
 		st_resp++;
 	}
@@ -39,7 +39,7 @@ int main(void){
 	//reading it in
 	double *heart_spikes = new double[st_heart];
 	st_heart = 0;
-	f = fopen("signal_thresholding/events.txt","rt");
+	f = fopen("data/processed_data/events.txt","rt");
 	while(fscanf(f, "%lf\n", &t) != EOF){
 		heart_spikes[st_heart] = t;
 		st_heart++;
@@ -48,7 +48,7 @@ int main(void){
 	double **resp_signal = new double*[st_resp];
 	for(int i = 0; i < st_resp; ++i) resp_signal[i] = new double[2];
 	st_resp = 0;
-	f = fopen("data/driving.txt","rt");
+	f = fopen("data/processed_data/driving.txt","rt");
 	while(fscanf(f, "%lf %lf\n", &t, &s) != EOF){
 		resp_signal[st_resp][0] = t;
 		resp_signal[st_resp][1] = s;
@@ -60,7 +60,7 @@ int main(void){
 	//make intervals
 	double ***intervals = new double**[st_heart-1];
 	st_resp = 0;
-	f = fopen("data/driving.txt","rt");
+	f = fopen("data/processed_data/driving.txt","rt");
 	t = 0;
 	while(t < heart_spikes[0]) fscanf(f, "%lf %lf\n", &t, &s); //first data points before the first event
 	double **stimuli_buffer = new double*[1000000];
